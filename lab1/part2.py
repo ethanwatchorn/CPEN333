@@ -2,7 +2,9 @@
 # student number: 16538530
 
 # A command-line 2048 game
-
+"""
+    Note: Doesn't continue if there's still possible moves left... Double check that that's not part of p2...
+"""
 import random
 
 board: list[list] = []  # a 2-D list to keep the current status of the game board
@@ -54,36 +56,55 @@ def promptGamerForTheNextMove() -> str: # Use as is
         print('Enter one of "W", "A", "S", "D", or "Q"') # otherwise inform the user about valid input
     return move
 
-def addANewTwoToBoard() -> None:
+def addANew2Or4ToBoard() -> None:
     """ 
         adds a new 2 at an available randomly-selected cell of the board
     """
 
     added = 0
-    while True:
-        if isFull():
-            break
-        if added >= 2:
+    is4 = random.random()
+    while True and not added:
+        is_empty_space = 0
+        for i in range(len(board)):
+            for j in range(len(board)):
+                if not board[i][j]:
+                    is_empty_space = 1
+        if not is_empty_space:
             break
 
         rand_x = random.randint(0, 3)
         rand_y = random.randint(0, 3)
 
+        # Look for rows/colums with only 1 empty space, just to make my life harder :)
+        for y in range(len(board)):
+            if board[y].count('') == 1:
+                rand_y = y
+        for x in enumerate(zip(board)):
+            if x[1].count('') == 1:
+                rand_x = x[0]
+
         if not board[rand_y][rand_x]:
-            board[rand_y][rand_x] = 2
-            added += 1
+            board[rand_y][rand_x] = 2 if is4 < 0.66 else 4
+            added = 1
         else:
             pass
 
-def isFull() -> bool:
+def isFullAndNoValidMove() -> bool:
     """ 
-        returns True if no empty cell is left, False otherwise 
+        returns True if no empty cell is left or there is no possible new move, False otherwise 
     """
 
     for i in range(len(board)):
         for j in range(len(board)):
             if not board[i][j]:
                 return False
+            if i > 0:
+                if board[i][j] == board[i-1][j]:
+                    return False
+            if j > 0:
+                if board[i][j] == board[i][j-1]:
+                    return False
+
 
     return True
 
@@ -195,10 +216,10 @@ if __name__ == "__main__":  # Use as is
             print("Exiting the game. Thanks for playing!")
             break
         updateTheBoardBasedOnTheUserMove(userInput)
-        addANewTwoToBoard()
+        addANew2Or4ToBoard()
         displayGame()
 
-        if isFull(): #game is over once all cells are taken
+        if isFullAndNoValidMove(): #game is over once all cells are taken
             print("Game is Over. Check out your score.")
             print("Thanks for playing!")
             break
