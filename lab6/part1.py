@@ -41,12 +41,14 @@ def philosopher(id: int, chopstick: list):
 if __name__ == "__main__":
     semaphoreList = list()          #this list will hold one semaphore per chopstick
     numberOfPhilosophers = 5
+    # Make sure there's only 4 philosophers that can sit
     philosophersAtTable = numberOfPhilosophers-1
 
     for i in range(numberOfPhilosophers):             
         semaphoreList.append(multiprocessing.Semaphore(1))    #one semaphore per chopstick
 
     philosopherProcessList = list()
+    # Only initialize 4 philosophers to use the 5 chopsticks among them
     for i in range(philosophersAtTable): #instantiate all processes representing philosophers
         philosopherProcessList.append(multiprocessing.Process(target=philosopher, args=(i, semaphoreList)))
     for j in range(philosophersAtTable): #start all child processes
