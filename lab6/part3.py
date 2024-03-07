@@ -25,11 +25,13 @@ def philosopher(id: int, chopstick: list):
 
         #to simplify, try statement not used here
         if id % 2:
+            # If it's an even philosopher, acquire the left chopstick first.
             chopstick[leftChopstick].acquire()
             print(f"DEBUG: philosopher{id} has chopstick{leftChopstick}")
             chopstick[rightChopstick].acquire()
             print(f"DEBUG: philosopher{id} has chopstick{rightChopstick}")
         else:
+            # Otherwise, accquire the right chopstick first.
             chopstick[rightChopstick].acquire()
             print(f"DEBUG: philosopher{id} has chopstick{rightChopstick}")
             chopstick[leftChopstick].acquire()
