@@ -1,6 +1,3 @@
-#student name: Ethan Watchorn
-#student number: 16538530
-
 import multiprocessing
 import random #is used to cause some randomness 
 import time   #is used to cause some delay to simulate thinking or eating times
@@ -24,9 +21,17 @@ def philosopher(id: int, chopstick: list):
         rightChopstick = (id + 1) % 5      #5 is number of philosophers
 
         #to simplify, try statement not used here
-        chopstick[leftChopstick].acquire()
+        while True:
+            # Continue checking to see if rightChopstick is available
+            # If it is, acquire it and check to see if leftChopstick is available
+            if chopstick[rightChopstick].acquire(block=False):
+                # If left chopstick is available, continue with eating.
+                if chopstick[leftChopstick].acquire(block=False):
+                    break
+                # Otherwise, release the rightChopstick so other philosophers can eat
+                chopstick[rightChopstick].release()
+
         print(f"DEBUG: philosopher{id} has chopstick{leftChopstick}")
-        chopstick[rightChopstick].acquire()
         print(f"DEBUG: philosopher{id} has chopstick{rightChopstick}")
 
         eatForAWhile()  #use this line as is
